@@ -21,7 +21,13 @@ st.write("The name on your smoothie will be:", name_on_order)
 cnx = st.connection("snowflake")
 session = cnx.session()
 # ----------------------------
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
+my_dataframe = session.table("smoothies.public.fruit_options").select(
+                                col('FRUIT_NAME'),
+                                col('SEARCH_ON')
+                            )
+
+# Convert to Snowpark Dataframe to a Pandas Dataframe so we can use the LOC function
+pd_df = my_dataframe.to_pandas()
 
 ingredients_list = st.multiselect(
     "Choose up to 5 ingredients:",
@@ -34,12 +40,17 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
 
+        cond = pd_df['FRUIT_NAME'] == fruit_chosen
+        search_on = pd_df.loc[cond, 'SEARCH_ON'].iloc[0]
+        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
+
         # Display more information for each fruit
         st.header(fruit_chosen + ' Nutrition Information')
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/"+fruit_chosen)
+        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/"+search_on)
         sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+  
 
-
+  
     # Insert Notes: columns not included in the insert command
     # - order_id happens automatically because the ORDERS table uses Unique ID SEQUENCES
     # - order_filled is default to FALSE
