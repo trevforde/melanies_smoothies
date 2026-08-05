@@ -62,4 +62,6 @@ url = "https://my.smoothiefroot.com/api/fruit/watermelon"
 smoothiefroot_response = requests.get(url)
 
 # Display the result in your standalone app
-st.text(smoothiefroot_response.text)
+# st.text(smoothiefroot_response.json())
+sf_df = st.dataframe(data=st.text(smoothiefroot_response.json()), use_container_width=True)
+
