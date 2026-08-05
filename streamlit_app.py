@@ -50,6 +50,16 @@ if ingredients_list:
         session.sql(my_insert_stmt).collect()
         st.success(success_message, icon="✅")
 
-import requests  
-smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")  
-st.text(smoothiefroot_response)
+# import requests  
+# smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")
+# st.text(smoothiefroot_response)
+
+
+import requests
+
+# Clean URL string without brackets
+url = "https://my.smoothiefroot.com/api/fruit/watermelon"
+smoothiefroot_response = requests.get(url)
+
+# Display the result in your standalone app
+st.text(smoothiefroot_response.text)
